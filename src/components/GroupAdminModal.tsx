@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, UserX, ShieldAlert, Trash2, Loader2, Users } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import api from '../services/api'; // ✅ Ensure this import path is correct
 
 interface GroupMember {
   _id: string;
@@ -15,7 +16,7 @@ interface Group {
   name: string;
   description: string;
   members: GroupMember[];
-  admin: string; // admin user ID string
+  admin: string;
   isPrivate: boolean;
   coverImageUrl?: string;
 }
@@ -68,13 +69,9 @@ const GroupAdminModal = ({
       const updatedGroup = response.data as Group;
       setMembers(updatedGroup.members);
       onGroupUpdate(updatedGroup);
-    } catch (err: unknown) {
+    } catch (err: any) {
       console.error('Failed to remove member:', err);
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Failed to remove member.');
-      }
+      setError(err.message || 'Failed to remove member.');
     } finally {
       setIsSubmitting(false);
     }
@@ -95,13 +92,9 @@ const GroupAdminModal = ({
       onGroupDelete(group._id);
       onClose();
       navigate('/groups');
-    } catch (err: unknown) {
+    } catch (err: any) {
       console.error('Failed to delete group:', err);
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Failed to delete group.');
-      }
+      setError(err.message || 'Failed to delete group.');
     } finally {
       setIsSubmitting(false);
     }
@@ -135,7 +128,6 @@ const GroupAdminModal = ({
             </div>
           )}
 
-          {/* Group Details */}
           <div className="bg-gray-700 p-4 rounded-lg">
             <h3 className="text-lg font-bold text-white mb-2">Details</h3>
             <p className="text-gray-300">Description: {group.description}</p>
@@ -152,7 +144,6 @@ const GroupAdminModal = ({
             )}
           </div>
 
-          {/* Members List */}
           <div className="bg-gray-700 p-4 rounded-lg">
             <h3 className="text-lg font-bold text-white mb-2 flex items-center">
               <Users size={20} className="mr-2" /> Members ({members.length})
@@ -197,7 +188,6 @@ const GroupAdminModal = ({
             </div>
           </div>
 
-          {/* Danger Zone */}
           {isAdmin && (
             <div className="bg-red-900/20 p-4 rounded-lg border border-red-500/50">
               <h3 className="text-lg font-bold text-red-400 mb-2 flex items-center">
@@ -217,7 +207,6 @@ const GroupAdminModal = ({
             </div>
           )}
 
-          {/* Delete Group Confirmation Modal */}
           {showConfirmDeleteGroup && (
             <div
               className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4"
