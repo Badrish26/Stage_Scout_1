@@ -23,7 +23,7 @@ interface CastingCall {
   roleType: string;
   location: string;
   applicationDeadline: string;
-  contactEmail?: string; // Mark optional if not always returned
+  contactEmail: string; // Mark optional if not always returned
 }
 
 const CastingCallsPage = () => {
